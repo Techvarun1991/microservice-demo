@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename compilation unit &apos;com.example.exception.DoctorScheduleException.java&apos; to &apos;DoctorScheduleNotFoundException.java&apos;&#x0D;&#x0A;- Original project: &apos;ScheduleService&apos;&#x0D;&#x0A;- Original element: &apos;com.example.exception.DoctorScheduleException.java&apos;&#x0D;&#x0A;- Renamed element: &apos;com.example.exception.DoctorScheduleNotFoundException.java&apos;" description="Rename compilation unit &apos;DoctorScheduleException.java&apos;" flags="2" id="org.eclipse.jdt.ui.rename.compilationunit" input="/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.example.exception{DoctorScheduleException.java" name="DoctorScheduleNotFoundException.java" references="false" stamp="1703746819915" version="1.0"/>
+</session>

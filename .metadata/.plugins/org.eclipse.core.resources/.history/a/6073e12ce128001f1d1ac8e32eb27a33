@@ -1,0 +1,36 @@
+package com.example.security;
+
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.KeycloakBuilder;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
+public class KeycloakSecurityUtils {
+
+	Keycloak keycloak;
+	
+	@Value("$(server-url)")
+	private String serverUrl;
+	@Value("$(grant-type)")
+	private String grantType;
+	@Value("$(password)")
+	private String password;
+	@Value("$(username)")
+	private String username;
+	@Value("$(client-id)")
+	private String clientId;
+	@Value("$(realm-name)")
+	private String realm;
+	
+	
+	public Keycloak getKeycloakInstance() {
+		if(keycloak == null ) {
+			keycloak = KeycloakBuilder
+							.builder().serverUrl("http://localhost:8080/").realm(realm)
+							.clientId(clientId).grantType("password")
+							.username(username).password(password).build();
+		}
+		return keycloak;
+	}
+}

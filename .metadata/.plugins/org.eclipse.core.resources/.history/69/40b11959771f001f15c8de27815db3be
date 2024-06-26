@@ -1,0 +1,22 @@
+package com.example.config;
+
+import org.keycloak.adapters.springsecurity.KeycloakSecurityComponents;
+import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        super.configure(http);
+        http.authorizeRequests()
+            .antMatchers("/api/public").permitAll() // Allow public access
+            .antMatchers("/api/private").hasRole("ROLE_USER") // Require ROLE_USER for access
+            .anyRequest().authenticated();
+    }
+}
+

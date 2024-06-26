@@ -1,0 +1,95 @@
+package com.example.dto;
+
+import java.util.Map;
+
+
+public class ScheduleRequestDTO {
+
+//		@JsonDeserialize
+	 	private String date;
+
+	    private Map<String, Boolean> timeSlots;
+
+	    private Long doctorId;
+
+	    private boolean onlineMode;
+
+	    private Long clinicId;
+
+	    private int slotDuration;
+
+		@Override
+		public String toString() {
+			return "ScheduleRequestDTO [date=" + date + ", timeSlots=" + timeSlots + ", doctorId=" + doctorId
+					+ ", onlineMode=" + onlineMode + ", clinicId=" + clinicId + ", slotDuration=" + slotDuration + "]";
+		}
+
+		public ScheduleRequestDTO() {
+			super();
+			// TODO Auto-generated constructor stub
+		}
+
+		public ScheduleRequestDTO(String date, Map<String, Boolean> timeSlots, Long doctorId, boolean onlineMode,
+				Long clinicId, int slotDuration) {
+			super();
+			this.date = date;
+			this.timeSlots = timeSlots;
+			this.doctorId = doctorId;
+			this.onlineMode = onlineMode;
+			this.clinicId = clinicId;
+			this.slotDuration = slotDuration;
+		}
+
+		public String getDate() {
+			return date;
+		}
+
+		public void setDate(String date) {
+			this.date = date;
+		}
+
+		public Map<String, Boolean> getTimeSlots() {
+			return timeSlots;
+		}
+
+		public void setTimeSlots(Map<String, Boolean> timeSlots) {
+			this.timeSlots = timeSlots;
+		}
+
+		public Long getDoctorId() {
+			return doctorId;
+		}
+
+		public void setDoctorId(Long doctorId) {
+			this.doctorId = doctorId;
+		}
+
+		public boolean isOnlineMode() {
+			return onlineMode;
+		}
+
+		public void setOnlineMode(boolean onlineMode) {
+			this.onlineMode = onlineMode;
+		}
+
+		public Long getClinicId() {
+			return clinicId;
+		}
+
+		public void setClinicId(Long clinicId) {
+			this.clinicId = clinicId;
+		}
+
+		public int getSlotDuration() {
+			return slotDuration;
+		}
+
+		public void setSlotDuration(int slotDuration) {
+			this.slotDuration = slotDuration;
+		}
+	    
+	    
+	
+
+}
+

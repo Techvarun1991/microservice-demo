@@ -1,0 +1,93 @@
+package com.example.controller;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.dto.ScheduleRequestDTO;
+import com.example.entity.Schedule;
+import com.example.exception.DoctorScheduleNotFoundException;
+import com.example.service.ScheduleService;
+
+@RestController
+@CrossOrigin("*")
+public class ScheduleController {
+
+	 private final ScheduleService scheduleService;
+
+	    @Autowired
+	    public ScheduleController(ScheduleService scheduleService) {
+	        this.scheduleService = scheduleService;
+	    }
+
+	    @PostMapping("/save")
+	    public ResponseEntity<String> saveDoctorSchedule(@RequestBody List<ScheduleRequestDTO> requestDTO) {
+	        try {
+	            scheduleService.saveSchedules(requestDTO);
+	            return ResponseEntity.ok("Doctor's schedule saved successfully.");
+	        } catch (DoctorScheduleNotFoundException e) {
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+	        }
+	    }
+	    
+	    @GetMapping("/doctor/{doctorId}")
+	    public ResponseEntity<?> getDoctorSchedule(@PathVariable Long doctorId) {
+	        // Call service method to get doctor's schedule
+	        return ResponseEntity.ok(scheduleService.getDoctorSchedule(doctorId));
+	    }
+	    
+	    @GetMapping("/{doctorId}/{date}/{onlineMode}")
+	    public ResponseEntity<Schedule> getDoctorScheduleByDate(
+	            @PathVariable Long doctorId,
+	            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+	            @PathVariable boolean onlineMode) {
+
+	        // Call the service to get the schedule
+	        Schedule scheduleResponseDTO = scheduleService.getDoctorScheduleByDate(doctorId, date,onlineMode);
+
+	        // Check if the schedule was found
+	        if (scheduleResponseDTO != null) {
+	            return ResponseEntity.ok(scheduleResponseDTO);
+	        } else {
+	            return ResponseEntity.notFound().build();
+	        }
+	    }
+	
+	    
+	    @GetMapping("/doctor/dateBetween/{doctorId}")
+	    public ResponseEntity<List<Schedule>> getDoctorSchedulesInDateRange(
+	            @PathVariable Long doctorId,
+	            @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startDate,
+	            @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate endDate) {
+
+	        List<Schedule> schedules = scheduleService.getDoctorSchedulesInDateRange(doctorId, startDate, endDate);
+	        return ResponseEntity.ok(schedules);
+	    }
+	    
+	    
+	    
+	    @PutMapping("/{doctorId}/{date}/{value}")
+	    public ResponseEntity<?> bookTimeSlot(
+	    		@PathVariable Long doctorId,
+	            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+	            @PathVariable boolean value,
+	            @PathVariable String time){
+	    	
+	    	scheduleService.bookSlot(doctorId,date,value);
+			return ResponseEntity.ok(true);
+	    }
+	    
+	    
+}

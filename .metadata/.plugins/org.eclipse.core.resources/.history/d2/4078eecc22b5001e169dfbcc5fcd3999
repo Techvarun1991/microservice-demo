@@ -1,0 +1,22 @@
+package com.example.service;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import com.example.dto.BookScheduleRequestDto;
+import com.example.dto.DoctorScheduleRequest;
+import com.example.dto.ScheduleRequestDTO;
+import com.example.entity.Schedule;
+
+public interface ScheduleService {
+
+	List<Schedule> getDoctorSchedule(Long doctorId);
+
+	void saveSchedules(List<ScheduleRequestDTO> requestDTO);
+
+	Schedule getDoctorScheduleByDate(DoctorScheduleRequest request);
+
+	List<Schedule> getDoctorSchedulesInDateRange(Long doctorId, LocalDate startDate, LocalDate endDate);
+
+	void bookSlot(BookScheduleRequestDto dto);
+}

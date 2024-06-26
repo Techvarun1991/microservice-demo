@@ -1,0 +1,60 @@
+package com.example.dto;
+
+import java.time.LocalDate;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
+public class DoctorScheduleRequest {
+
+	
+	private long doctorId;
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+	private LocalDate date;
+	private boolean onlineMode;
+	private String time;
+	@Override
+	public String toString() {
+		return "DoctorScheduleRequest [doctorId=" + doctorId + ", date=" + date + ", onlineMode=" + onlineMode
+				+ ", time=" + time + "]";
+	}
+	public DoctorScheduleRequest() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	public DoctorScheduleRequest(long doctorId, LocalDate date, boolean onlineMode, String time) {
+		super();
+		this.doctorId = doctorId;
+		this.date = date;
+		this.onlineMode = onlineMode;
+		this.time = time;
+	}
+	public long getDoctorId() {
+		return doctorId;
+	}
+	public void setDoctorId(long doctorId) {
+		this.doctorId = doctorId;
+	}
+	public LocalDate getDate() {
+		return date;
+	}
+	public void setDate(LocalDate date) {
+		this.date = date;
+	}
+	public boolean isOnlineMode() {
+		return onlineMode;
+	}
+	public void setOnlineMode(boolean onlineMode) {
+		this.onlineMode = onlineMode;
+	}
+	public String getTime() {
+		return time;
+	}
+	public void setTime(String time) {
+		this.time = time;
+	}
+
+	
+	
+	
+	
+}

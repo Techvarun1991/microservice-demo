@@ -1,0 +1,23 @@
+spring.application.name=user-management
+
+realm-name=demo
+server-url=http://localhost:8080
+client-id=admin-cli
+grant-type=password
+password=admin
+username=onehealthinfobell@gmail.com
+
+eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+
+
+# Eureka Client Configuration
+eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka
+eureka.client.register-with-eureka=true
+eureka.client.fetch-registry=true
+
+# Use IP address instead of hostname
+eureka.instance.preferIpAddress=true
+eureka.instance.ip-address=127.0.0.1
+
+# Set the hostname to localhost
+eureka.instance.hostname=localhost

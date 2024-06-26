@@ -1,0 +1,102 @@
+package com.example.controller;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import com.example.dto.BookScheduleRequestDto;
+import com.example.dto.DoctorScheduleRequest;
+import com.example.dto.ScheduleRequestDTO;
+import com.example.entity.DoctorSchedule;
+import com.example.exception.DoctorScheduleNotFoundException;
+import com.example.exception.ScheduleServiceException;
+import com.example.service.ScheduleService;
+
+@RestController
+public class ScheduleController {
+
+    @Autowired
+    private ScheduleService scheduleService;
+
+    private static final Logger logger = LoggerFactory.getLogger(ScheduleController.class);
+
+    @PostMapping("/save")
+    public ResponseEntity<String> saveDoctorSchedule(@RequestBody List<ScheduleRequestDTO> requestDTO) throws ScheduleServiceException {
+        try {
+            scheduleService.saveSchedules(requestDTO);
+            logger.info("Doctor's schedule saved successfully.");
+            return ResponseEntity.ok("Doctor's schedule saved successfully.");
+        } catch (DoctorScheduleNotFoundException e) {
+            logger.error("Error saving doctor's schedule: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/doctor/{doctorId}")
+    public ResponseEntity<?> getDoctorSchedule(@PathVariable Long doctorId) {
+        try {
+            List<DoctorSchedule> doctorSchedules = scheduleService.getDoctorSchedule(doctorId);
+            logger.info("Doctor's schedule fetched successfully.");
+            return ResponseEntity.ok(doctorSchedules);
+        } catch (Exception e) {
+            logger.error("Error getting doctor's schedule: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error getting doctor's schedule");
+        }
+    }
+
+    @GetMapping("/byDateAndMode")
+    public ResponseEntity<?> getDoctorScheduleByDate(@RequestBody DoctorScheduleRequest request) {
+        try {
+            DoctorSchedule scheduleResponseDTO = scheduleService.getDoctorScheduleByDate(request);
+            if (scheduleResponseDTO != null) {
+                logger.info("Doctor's schedule by date fetched successfully.");
+                return ResponseEntity.ok(scheduleResponseDTO);
+            } else {
+                logger.info("Doctor's schedule by date not found.");
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            logger.error("Error getting doctor's schedule by date: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error getting doctor's schedule by date");
+        }
+    }
+
+    @GetMapping("/doctor/dateBetween/{doctorId}")
+    public ResponseEntity<?> getDoctorSchedulesInDateRange(
+            @PathVariable Long doctorId,
+            @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startDate,
+            @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate endDate) {
+        try {
+            List<DoctorSchedule> schedules = scheduleService.getDoctorSchedulesInDateRange(doctorId, startDate, endDate);
+            logger.info("Doctor's schedules in date range fetched successfully.");
+            return ResponseEntity.ok(schedules);
+        } catch (Exception e) {
+            logger.error("Error getting doctor's schedules in date range: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error getting doctor's schedules in date range");
+        }
+    }
+
+    @PutMapping("/bookSlot")
+    public ResponseEntity<?> bookTimeSlot(@RequestBody BookScheduleRequestDto dto) {
+        try {
+            scheduleService.bookSlot(dto);
+            logger.info("Time slot booked successfully.");
+            return ResponseEntity.ok(true);
+        } catch (Exception e) {
+            logger.error("Error booking time slot: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error booking time slot");
+        }
+    }
+}

@@ -1,0 +1,15 @@
+package com.example.dto;
+
+import java.time.LocalDate;
+
+public class BookScheduleRequestDto {
+
+	private long doctorId;
+	private LocalDate date;
+	private boolean onlineMode;
+	private String time;
+	private boolean value;
+	
+	
+	
+}

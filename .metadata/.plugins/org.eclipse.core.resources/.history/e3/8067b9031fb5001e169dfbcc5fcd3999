@@ -1,0 +1,21 @@
+package com.example.service;
+
+import java.util.List;
+
+import com.example.dto.DoctorScheduleRequest;
+import com.example.dto.ScheduleRequestDTO;
+import com.example.entity.Schedule;
+
+public interface ScheduleService {
+
+	void getDoctorSchedule(Long doctorId);
+
+	void saveSchedules(List<ScheduleRequestDTO> requestDTO);
+
+	Schedule getDoctorScheduleByDate(DoctorScheduleRequest request);
+	
+	
+
+	
+	
+}

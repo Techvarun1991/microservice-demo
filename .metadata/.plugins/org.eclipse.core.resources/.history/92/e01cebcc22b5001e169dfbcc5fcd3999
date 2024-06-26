@@ -1,0 +1,18 @@
+package com.example.repo;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.example.entity.Schedule;
+
+public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
+
+	List<Schedule> findByDoctorId(Long doctorId);
+	
+	Optional<Schedule> findByDoctorIdAndDateAndOnlineMode(Long doctorId, LocalDate date,boolean onlineMode);
+	
+	List<Schedule> findByDoctorIdAndDateBetween(Long doctorId, LocalDate startDate, LocalDate endDate);
+}

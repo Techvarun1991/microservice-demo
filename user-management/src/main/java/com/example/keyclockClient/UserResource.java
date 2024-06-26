@@ -1,0 +1,169 @@
+package com.example.keyclockClient;
+
+import java.util.ArrayList;
+import java.util.List;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.KeycloakBuilder;
+import org.keycloak.common.util.CollectionUtil;
+import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import com.example.dto.User;
+import com.example.security.CustomOpaqueTokenIntrospector;
+import com.example.security.KeycloakSecurityUtils;
+import jakarta.ws.rs.core.Response;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+
+
+@RestController
+@RequestMapping("/api/users")
+public class UserResource {
+	
+	@Autowired
+    private CustomOpaqueTokenIntrospector tokenIntrospector;
+
+	@Autowired
+	private KeycloakSecurityUtils keycloakSecurityUtils;
+	
+	@Value("$(realm-name)")
+	private String realm;
+	
+	@PreAuthorize("permitAll()")
+	@GetMapping
+	public List<User> getAllUsers() {
+		Keycloak keycloak = keycloakSecurityUtils.getKeycloakInstance();
+		List<UserRepresentation> userRepresentations = keycloak.realm("demo").users().list();
+		return mapUsers(userRepresentations);
+		
+	}
+	
+	 @PostMapping
+	    public ResponseEntity<User> createUser(@RequestBody User user) {
+	        UserRepresentation userRep = mapUserRep(user);
+	        Keycloak keycloak = keycloakSecurityUtils.getKeycloakInstance();
+	        
+	        // Create the user
+	        Response response = keycloak.realm("demo").users().create(userRep);
+	        
+	        // Check if the user was created successfully
+	        if (response.getStatus() == 201) {
+	            // Get the userId from the response location header
+	            String userId = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");
+
+	            // Send verification email
+	            keycloak.realm("demo").users().get(userId).sendVerifyEmail();
+	            
+	            return ResponseEntity.ok(user);
+	        } else {
+	            return ResponseEntity.status(response.getStatus()).build();
+	        }
+	    }
+
+	    private UserRepresentation mapUserRep(User user) {
+	        UserRepresentation userRep = new UserRepresentation();
+	        
+	        userRep.setUsername(user.getUserName());
+	        userRep.setFirstName(user.getFirstName());
+	        userRep.setLastName(user.getLastName());
+	        userRep.setEmail(user.getEmail());
+	        userRep.setEnabled(true);
+	        userRep.setEmailVerified(false);
+	        
+	        List<CredentialRepresentation> creds = new ArrayList<>();
+	        CredentialRepresentation cred = new CredentialRepresentation();
+	        cred.setTemporary(false);
+	        cred.setType(CredentialRepresentation.PASSWORD);
+	        cred.setValue(user.getPassword());
+	        creds.add(cred);
+	        userRep.setCredentials(creds);
+	        
+	        return userRep;
+	    }
+	
+	
+	
+	private List<User> mapUsers(List<UserRepresentation> list){
+		List<User> users = new ArrayList<>();
+		if(CollectionUtil.isNotEmpty(list)) {
+			list.forEach(userRep -> {
+				users.add(mapUser(userRep));
+			});
+		}
+		return users;
+	}
+	
+	private User mapUser(UserRepresentation userRep) {
+		User user = new User();
+		
+		user.setFirstName(userRep.getFirstName());
+		user.setLastName(userRep.getLastName());
+		user.setUserName(userRep.getUsername());
+		user.setEmail(userRep.getEmail());
+		
+		return user;
+		
+	}
+	
+	 @PostMapping("/forgot-password")
+	    public ResponseEntity<String> forgotPassword(@RequestParam String email) {
+	        Keycloak keycloak = keycloakSecurityUtils.getKeycloakInstance();
+	        
+	        // Get the user by email
+	        List<UserRepresentation> usersResource = keycloak.realm("demo").users().search(email);
+	        
+	        if (usersResource.isEmpty()) {
+	            return ResponseEntity.notFound().build();
+	        }
+
+	        UserRepresentation user = usersResource.get(0);
+	        // Send forgot password email with OTP
+	        keycloak.realm("demo").users().get(user.getId()).executeActionsEmail(List.of("UPDATE_PASSWORD"));
+
+	        return ResponseEntity.ok("Reset password email sent successfully.");
+	    }
+	 
+	 
+	 @PreAuthorize("hasAuthority('ROLE_DOCTOR')")
+	 @GetMapping("/{userId}")
+	    public ResponseEntity<String> getUserById(@RequestHeader(name = "Authorization") String authorizationHeader,
+	                                                          @PathVariable("userId") String userId) {
+	        String token = extractToken(authorizationHeader);
+	        if (token == null) {
+	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+	        }
+	        try {
+	            // Validate the user ID using the token introspector
+	            tokenIntrospector.validateUserId(token, userId);
+
+	            // Fetch user details from Keycloak
+	           
+	            return ResponseEntity.ok("User Fetched!!");
+	        } catch (RuntimeException e) {
+	            // Handle user ID mismatch
+	            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	        }
+	    }
+
+	    private String extractToken(String authorizationHeader) {
+	        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+	            return authorizationHeader.substring(7);
+	        }
+	        return null;
+	    }
+
+	    
+}

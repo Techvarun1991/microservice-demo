@@ -1,0 +1,6 @@
+package com.micro.security;
+
+public class SecurityConfig {
+
+	
+}

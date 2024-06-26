@@ -1,0 +1,91 @@
+package com.example.service;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.dto.BookScheduleRequestDto;
+import com.example.dto.DoctorScheduleRequest;
+import com.example.dto.ScheduleRequestDTO;
+import com.example.entity.Schedule;
+import com.example.repo.ScheduleRepository;
+
+@Service
+public class ScheduleService {
+
+	@Autowired
+    private ScheduleRepository doctorScheduleRepository;
+	
+
+	
+
+
+//	public List<Schedule> addSchedule(ScheduleRequestDTO scheduleRequestDTO) {
+//		
+//        Schedule schedule = new Schedule();
+//        schedule.setDate(scheduleRequestDTO.getDate());
+//        schedule.setTimeSlots(scheduleRequestDTO.getTimeSlots());
+//        schedule.setDoctorId(scheduleRequestDTO.getDoctorId());
+//        schedule.setOnlineMode(scheduleRequestDTO.isOnlineMode());
+//        schedule.setClinicId(scheduleRequestDTO.getClinicId());
+//        schedule.setSlotDuration(scheduleRequestDTO.getSlotDuration());
+//
+//        return doctorScheduleRepository.save(schedule);
+//    }
+	public void saveSchedules(List<ScheduleRequestDTO> scheduleDTOs) {
+        List<Schedule> schedules = scheduleDTOs.stream()
+                .map(this::mapToEntity)
+                .collect(Collectors.toList());
+
+        doctorScheduleRepository.saveAll(schedules);
+    }
+
+    private Schedule mapToEntity(ScheduleRequestDTO scheduleDTO) {
+    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        Schedule schedule = new Schedule();
+        schedule.setDate(LocalDate.parse(scheduleDTO.getDate(), formatter));
+        schedule.setTimeSlots(scheduleDTO.getTimeSlots());
+        schedule.setDoctorId(scheduleDTO.getDoctorId());
+        schedule.setOnlineMode(scheduleDTO.isOnlineMode());
+        schedule.setClinicId(scheduleDTO.getClinicId());
+        schedule.setSlotDuration(scheduleDTO.getSlotDuration());
+        return schedule;
+    }
+	
+	 public List<Schedule> getDoctorSchedule(Long doctorId) {
+	        // Call repository method to fetch doctor's schedule by ID
+	        return doctorScheduleRepository.findByDoctorId(doctorId);
+	    }
+	 
+	 public Schedule getDoctorScheduleByDate(DoctorScheduleRequest request) {
+	        Optional<Schedule> optionalSchedule = doctorScheduleRepository.findByDoctorIdAndDateAndOnlineMode(request.getDoctorId(), request.getDate(),request.isOnlineMode());
+
+	        if (optionalSchedule.isPresent()) {
+	            Schedule schedule = optionalSchedule.get();
+	            // You may need to convert the entity to a DTO based on your requirements
+	            return schedule;
+	        } else {
+	            return null; // Schedule not found
+	        }
+	    }
+	 
+	 public List<Schedule> getDoctorSchedulesInDateRange(Long doctorId, LocalDate startDate, LocalDate endDate) {
+	        return doctorScheduleRepository.findByDoctorIdAndDateBetween(doctorId, startDate, endDate);
+	    }
+
+	public boolean bookSlot(BookScheduleRequestDto dto) {
+		// TODO Auto-generated method stub
+		Schedule optionalSchedule = doctorScheduleRepository.findByDoctorIdAndDateAndOnlineMode(dto.getDoctorId(),dto.getDate(),dto.isOnlineMode()).get();
+		Map<String, Boolean> map = optionalSchedule.getTimeSlots();
+		map.computeIfPresent(dto.getTime(),(k,v)->dto.isValue());
+		optionalSchedule.setTimeSlots(map);
+		doctorScheduleRepository.save(optionalSchedule);
+		return true;
+	}
+}

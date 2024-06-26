@@ -1,0 +1,64 @@
+package com.example.dto;
+
+import java.time.LocalDate;
+
+public class BookScheduleRequestDto {
+
+	private long doctorId;
+	private LocalDate date;
+	private boolean onlineMode;
+	private String time;
+	private boolean value;
+	public long getDoctorId() {
+		return doctorId;
+	}
+	public void setDoctorId(long doctorId) {
+		this.doctorId = doctorId;
+	}
+	public LocalDate getDate() {
+		return date;
+	}
+	public void setDate(LocalDate date) {
+		this.date = date;
+	}
+	public boolean isOnlineMode() {
+		return onlineMode;
+	}
+	public void setOnlineMode(boolean onlineMode) {
+		this.onlineMode = onlineMode;
+	}
+	public String getTime() {
+		return time;
+	}
+	public void setTime(String time) {
+		this.time = time;
+	}
+	public boolean isValue() {
+		return value;
+	}
+	public void setValue(boolean value) {
+		this.value = value;
+	}
+	@Override
+	public String toString() {
+		return "BookScheduleRequestDto [doctorId=" + doctorId + ", date=" + date + ", onlineMode=" + onlineMode
+				+ ", time=" + time + ", value=" + value + "]";
+	}
+	public BookScheduleRequestDto(long doctorId, LocalDate date, boolean onlineMode, String time, boolean value) {
+		super();
+		this.doctorId = doctorId;
+		this.date = date;
+		this.onlineMode = onlineMode;
+		this.time = time;
+		this.value = value;
+	}
+	public BookScheduleRequestDto() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
+	
+	
+	
+	
+}

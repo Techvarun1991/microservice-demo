@@ -1,0 +1,67 @@
+package com.example.security;
+
+import org.keycloak.OAuth2Constants;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.KeycloakBuilder;
+import org.keycloak.representations.AccessTokenResponse;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
+public class KeycloakSecurityUtils {
+
+	Keycloak keycloak;
+	
+	@Value("$(server-url)")
+	private String serverUrl;
+	@Value("$(grant-type)")
+	private String grantType;
+	@Value("$(password)")
+	private String password;
+	@Value("$(username)")
+	private String username;
+	@Value("$(client-id)")
+	private String clientId;
+	@Value("$(realm-name)")
+	private String realm;
+	
+	
+//	 private String getAccessToken() {
+//	        Keycloak keycloak = KeycloakBuilder.builder()
+//	                .serverUrl("http://localhost:8080/")
+//	                .realm("demo")
+//	                .clientId("admin-cli")
+//	                .username("onehealthinfobell@gmail.com")
+//	                .password("admin")
+//	                .grantType(OAuth2Constants.PASSWORD)
+//	                .build();
+//
+//	        AccessTokenResponse tokenResponse = keycloak.tokenManager().getAccessToken();
+//	        return tokenResponse.getToken();
+//	    }
+//
+//	    public Keycloak getKeycloakInstance() {
+//	        if (keycloak == null) {
+//	            String token = getAccessToken();
+//	            keycloak = KeycloakBuilder.builder()
+//	            		.serverUrl("http://localhost:8080/")
+//		                .realm("demo")
+//		                .clientId("admin-cli")
+//	                    .authorization("Bearer " + token)
+//	                    .build();
+//	        }
+//	        return keycloak;
+//	    }
+	
+	public Keycloak getKeycloakInstance() {
+		System.out.println("Check 2");
+		if(keycloak == null ) {
+			System.out.println("Check 4");
+			keycloak = KeycloakBuilder
+							.builder().serverUrl("http://localhost:8080/").realm("demo")
+							.clientId("admin-cli").grantType("password")
+							.username("onehealthinfobell@gmail.com").password("admin").build();
+		}
+		return keycloak;
+	}
+}

@@ -1,0 +1,58 @@
+package com.micro.security;
+
+//import org.springframework.beans.factory.annotation.Value;
+//import org.springframework.context.annotation.Bean;
+//import org.springframework.context.annotation.Configuration;
+//import org.springframework.web.servlet.config.annotation.CorsRegistry;
+//import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+//
+//@Configuration
+//public class SecurityConfig {
+//
+//
+//    @Bean
+//    public WebMvcConfigurer corsConfigurer() {
+//        return new WebMvcConfigurer() {
+//            @Override
+//            public void addCorsMappings(CorsRegistry registry) {
+//                System.out.println("-------------------------CORS ENABLED-----------------------------");
+//                    registry.addMapping("/**")
+//                            .allowedOrigins("*")
+//                            .allowedMethods("*")
+//                            .allowedHeaders("*")
+//                            .allowCredentials(true);
+//                }
+//        };
+//    }
+//}
+//
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.CorsWebFilter;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+
+@Configuration
+@Profile("server1")
+public class SecurityConfig {
+    @Bean
+    public CorsWebFilter corsWebFilter() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        
+        // Use allowedOriginPatterns instead of allowedOrigins
+        corsConfiguration.addAllowedOriginPattern("*");
+        
+        // Specify the origins explicitly if you know them
+        // corsConfiguration.addAllowedOrigin("http://localhost:3000");
+        
+        corsConfiguration.addAllowedMethod("*");
+        corsConfiguration.addAllowedHeader("*");
+        corsConfiguration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfiguration);
+
+        return new CorsWebFilter(source);
+    }
+}

@@ -1,0 +1,7 @@
+spring.application.name=auth-service
+
+keycloak.auth-server-url=http://localhost:8080/auth
+keycloak.realm=demo
+keycloak.resource=ecommerce-microservices
+keycloak.credentials.secret=
+

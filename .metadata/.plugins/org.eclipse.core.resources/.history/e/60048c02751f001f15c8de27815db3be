@@ -1,0 +1,7 @@
+spring.application.name=auth-service
+
+keycloak.auth-server-url=http://localhost:8080/auth
+keycloak.realm=my-realm
+keycloak.resource=my-auth-service
+keycloak.credentials.secret=your-client-secret
+

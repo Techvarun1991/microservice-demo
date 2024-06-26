@@ -1,0 +1,68 @@
+#spring.security.oauth2.resourceserver.opaquetoken.introspection-uri=http://192.168.1.206:30333/realms/onehealth/protocol/openid-connect/token/introspect
+#spring.security.oauth2.resourceserver.opaquetoken.client-id=doctor-app
+#spring.security.oauth2.resourceserver.opaquetoken.client-secret=APlWN7QT7d7axGJd2zQ1P8x18nwMgwN0
+spring.main.web-application-type=servlet
+
+server.port=8000
+spring.main.allow-bean-definition-overriding=true
+eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+spring.application.name=api-gateway
+
+
+
+## Product Service Route
+spring.cloud.gateway.routes[0].id=product-service
+spring.cloud.gateway.routes[0].uri=lb://product-service
+spring.cloud.gateway.routes[0].predicates[0]=Path=/product/**
+
+## Order Service Route
+spring.cloud.gateway.routes[1].id=order-service
+spring.cloud.gateway.routes[1].uri=lb://order-service
+spring.cloud.gateway.routes[1].predicates[0]=Path=/order/**
+
+## Inventory Service Route
+spring.cloud.gateway.routes[4].id=inventory-service
+spring.cloud.gateway.routes[4].uri=lb://inventory-service
+spring.cloud.gateway.routes[4].predicates[0]=Path=/inventory/**
+
+## Discover Server Route
+spring.cloud.gateway.routes[2].id=discovery-server
+spring.cloud.gateway.routes[2].uri=http://localhost:8761
+spring.cloud.gateway.routes[2].predicates[0]=Path=/eureka/web
+spring.cloud.gateway.routes[2].filters[0]=SetPath=/
+
+## Discover Server Static Resources Route
+spring.cloud.gateway.routes[3].id=discovery-server-static
+spring.cloud.gateway.routes[3].uri=http://localhost:8761
+spring.cloud.gateway.routes[3].predicates[0]=Path=/eureka/**
+
+## Discover Server Static Resources Route
+spring.cloud.gateway.routes[5].id=user-management
+spring.cloud.gateway.routes[5].uri=lb://user-management
+spring.cloud.gateway.routes[5].predicates[0]=Path=/api/users/**
+
+
+
+# Eureka Client Configuration
+eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka
+eureka.client.register-with-eureka=true
+eureka.client.fetch-registry=true
+
+# Use IP address instead of hostname
+eureka.instance.preferIpAddress=true
+eureka.instance.ip-address=127.0.0.1
+
+# Set the hostname to localhost
+eureka.instance.hostname=localhost
+
+##spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:8080/realms/demo
+#spring.security.oauth2.resourceserver.opaquetoken.client-id=ecommerce-microservices
+#spring.security.oauth2.resourceserver.opaquetoken.client-secret=2UdAoD5Dswb4ykWUhHNiMkqJ3DCsrY58
+#spring.security.oauth2.resourceserver.opaquetoken.introspection-uri=http://localhost:8080/realms/demo/protocol/openid-connect/token/introspect
+
+keycloak.realm=demo
+keycloak.auth-server-url=http://localhost:8080/
+keycloak.ssl-required=external
+keycloak.resource=ecommerce-microservices
+keycloak.public-client=true
+

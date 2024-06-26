@@ -1,0 +1,35 @@
+server.port=8888
+spring.datasource.url=jdbc:postgresql://localhost:5432/demo?sessionVariables=sql_mode='NO_ENGINE_SUBSTITUTION'&jdbcCompliantTruncation=false
+spring.datasource.username=postgres
+spring.datasource.password=varun
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true 
+spring.application.name=schedule-service
+
+
+#	spring.cloud.config.enabled=false
+	spring.application.name=${APPLICATION_NAME:onehealth-doctorschedule}
+	#server.port=8080
+	
+	# Replace this URL with the actual URL of your patientProfile microservice
+	apiGatewayUrl=${API_GATEWAY:http://192.168.1.206:30002}
+ 
+#	
+#	# Database configuration
+#	spring.datasource.url=jdbc:postgresql://${POSTGRES_HOST:192.168.1.206}:30442/${POSTGRES_DB:onehealthdb}?sessionVariables=sql_mode='NO_ENGINE_SUBSTITUTION'&jdbcCompliantTruncation=false
+#	spring.datasource.username=${POSTGRES_USER:onehealth}
+#	spring.datasource.password=${POSTGRES_PASSWORD:onehealth}
+#	spring.datasource.driver-class-name=org.postgresql.Driver
+	
+	# JPA/Hibernate configuration
+	spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+	spring.jpa.hibernate.ddl-auto=update
+	spring.jpa.properties.hibernate.format_sql=true
+	
+	## Eureka client configurations
+	spring.main.web-application-type=reactive
+	eureka.client.register-with-eureka=true
+	eureka.client.fetch-registry=true
+	eureka.client.serviceUrl.defaultZone=http://192.168.1.206:30001/eureka
+	#eureka.client.serviceUrl.defaultZone=${EUREKA_SERVER:https://serviceregistry-yjb28-dev.apps.sandbox-m4.g2pi.p1.openshiftapps.com/eureka}

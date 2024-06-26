@@ -1,0 +1,124 @@
+package com.example.entity;
+
+import java.time.LocalDate;
+import java.util.Map;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.MapKeyColumn;
+import jakarta.persistence.JoinColumn;
+@Entity
+public class DoctorSchedule {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long scheduleId;
+
+    private LocalDate date;
+
+    @ElementCollection
+    @CollectionTable(name = "time_slots", joinColumns = @JoinColumn(name = "schedule_id"))
+    @MapKeyColumn(name = "time")
+    @Column(name = "available")
+    private Map<String, Boolean> timeSlots;
+
+    private Long doctorId;
+
+    private boolean onlineMode; // true for online, false for offline
+
+    private Long clinicId; // Clinic ID for offline mode
+
+    private int slotDuration; // Duration of each time slot in minutes
+
+	@Override
+	public String toString() {
+		return "Schedule [scheduleId=" + scheduleId + ", date=" + date + ", timeSlots=" + timeSlots + ", doctorId="
+				+ doctorId + ", onlineMode=" + onlineMode + ", clinicId=" + clinicId + ", slotDuration=" + slotDuration
+				+ "]";
+	}
+
+	public DoctorSchedule() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public DoctorSchedule(Long scheduleId, LocalDate date, Map<String, Boolean> timeSlots, Long doctorId, boolean onlineMode,
+			Long clinicId, int slotDuration) {
+		super();
+		this.scheduleId = scheduleId;
+		this.date = date;
+		this.timeSlots = timeSlots;
+		this.doctorId = doctorId;
+		this.onlineMode = onlineMode;
+		this.clinicId = clinicId;
+		this.slotDuration = slotDuration;
+	}
+
+	public Long getScheduleId() {
+		return scheduleId;
+	}
+
+	public void setScheduleId(Long scheduleId) {
+		this.scheduleId = scheduleId;
+	}
+
+	public LocalDate getDate() {
+		return date;
+	}
+
+	public void setDate(LocalDate date) {
+		this.date = date;
+	}
+
+	public Map<String, Boolean> getTimeSlots() {
+		return timeSlots;
+	}
+
+	public void setTimeSlots(Map<String, Boolean> timeSlots) {
+		this.timeSlots = timeSlots;
+	}
+
+	public Long getDoctorId() {
+		return doctorId;
+	}
+
+	public void setDoctorId(Long doctorId) {
+		this.doctorId = doctorId;
+	}
+
+	public boolean isOnlineMode() {
+		return onlineMode;
+	}
+
+	public void setOnlineMode(boolean onlineMode) {
+		this.onlineMode = onlineMode;
+	}
+
+	public Long getClinicId() {
+		return clinicId;
+	}
+
+	public void setClinicId(Long clinicId) {
+		this.clinicId = clinicId;
+	}
+
+	public int getSlotDuration() {
+		return slotDuration;
+	}
+
+	public void setSlotDuration(int slotDuration) {
+		this.slotDuration = slotDuration;
+	}
+
+    // getters and setters...
+
+
+
+	
+
+	
+}
